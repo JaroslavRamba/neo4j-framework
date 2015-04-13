@@ -86,6 +86,12 @@ public interface PerformanceTest {
     void prepareDatabase(GraphDatabaseService database, Map<String, Object> params);
 
     /**
+     * Set path to the existing database, if tests are supposed to be done on the existing one.
+     * @return path existing database path.
+     */
+    String getExistingDatabasePath();
+
+    /**
      * Run the performance test.
      *
      * @param params test parameters.

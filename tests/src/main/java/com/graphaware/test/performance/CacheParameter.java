@@ -26,6 +26,6 @@ public class CacheParameter extends ObjectParameter<CacheConfiguration> {
     }
 
     public CacheParameter(String name) {
-        super(name, new NoCache(), new LowLevelCache(), new HighLevelCache());
+        super(name, new HighLevelCache(), new LowLevelCache(), new NoCache());
     }
 }

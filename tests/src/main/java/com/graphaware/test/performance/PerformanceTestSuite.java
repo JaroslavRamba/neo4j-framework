@@ -16,6 +16,7 @@
 
 package com.graphaware.test.performance;
 
+import net.lingala.zip4j.core.ZipFile;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 import org.neo4j.graphdb.GraphDatabaseService;
@@ -24,6 +25,7 @@ import org.neo4j.graphdb.factory.GraphDatabaseFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
@@ -101,7 +103,7 @@ public abstract class PerformanceTestSuite {
 
         //dry runs - ignore results
         for (int i = 0; i < performanceTest.dryRuns(params); i++) {
-            LOG.debug("Dry run " + (i + 1));
+            LOG.info("Dry run " + (i + 1)); //TODO how to show debug in Intelij terminal
             run(performanceTest, params);
         }
 
@@ -109,7 +111,7 @@ public abstract class PerformanceTestSuite {
 
         //real runs
         for (int i = 0; i < performanceTest.measuredRuns(); i++) {
-            LOG.debug("Measured run " + (i + 1));
+            LOG.info("Measured run " + (i + 1));
             testResults.acceptResult(params, run(performanceTest, params));
         }
 
@@ -168,7 +170,16 @@ public abstract class PerformanceTestSuite {
      * @param params          with which the test will be run.
      */
     private void createDatabase(PerformanceTest performanceTest, Map<String, Object> params) {
-        GraphDatabaseBuilder graphDatabaseBuilder = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(temporaryFolder.getRoot().getPath());
+        GraphDatabaseBuilder graphDatabaseBuilder;
+
+        String databaseZipPath = performanceTest.getExistingDatabasePath();
+        if (databaseZipPath != null) {
+            String dababaseFolderName = new File(databaseZipPath).getName();
+            dababaseFolderName = dababaseFolderName.replace(".zip", "");
+            graphDatabaseBuilder = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(unzipDatabase(temporaryFolder, databaseZipPath) + "/" + dababaseFolderName);
+        } else {
+            graphDatabaseBuilder = new GraphDatabaseFactory().newEmbeddedDatabaseBuilder(temporaryFolder.getRoot().getPath());
+        }
 
         Map<String, String> dbConfig = performanceTest.databaseParameters(params);
         if (dbConfig != null) {
@@ -178,8 +189,18 @@ public abstract class PerformanceTestSuite {
         database = graphDatabaseBuilder.newGraphDatabase();
 
         registerShutdownHook(database);
-
         performanceTest.prepareDatabase(database, params);
+    }
+
+    private String unzipDatabase(TemporaryFolder tmp, String zipLocation) {
+        try {
+            ZipFile zipFile = new ZipFile(zipLocation);
+            zipFile.extractAll(tmp.getRoot().getAbsolutePath());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return tmp.getRoot().getAbsolutePath();
     }
 
     /**

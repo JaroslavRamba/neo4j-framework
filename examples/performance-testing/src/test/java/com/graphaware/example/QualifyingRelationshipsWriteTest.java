@@ -120,6 +120,11 @@ public class QualifyingRelationshipsWriteTest implements PerformanceTest {
         }).execute();
     }
 
+    @Override
+    public String getExistingDatabasePath() {
+        return null;
+    }
+
     /**
      * {@inheritDoc}
      */

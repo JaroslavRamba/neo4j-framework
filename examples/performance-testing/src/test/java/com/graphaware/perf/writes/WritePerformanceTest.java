@@ -114,6 +114,11 @@ public class WritePerformanceTest implements PerformanceTest {
     }
 
     @Override
+    public String getExistingDatabasePath() {
+        return null;
+    }
+
+    @Override
     public long run(final GraphDatabaseService database, final Map<String, Object> params) {
         final DatabaseWriter writer = resolveWriter((Writer) params.get(WRITER), database);
         if (writer != null) {

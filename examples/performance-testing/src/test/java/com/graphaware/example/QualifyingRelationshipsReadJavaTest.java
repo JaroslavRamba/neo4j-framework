@@ -46,6 +46,11 @@ public class QualifyingRelationshipsReadJavaTest extends QualifyingRelationships
         return "Qualifying Relationships (Reading, Java API)";
     }
 
+    @Override
+    public String getExistingDatabasePath() {
+        return null;
+    }
+
     /**
      * {@inheritDoc}
      */

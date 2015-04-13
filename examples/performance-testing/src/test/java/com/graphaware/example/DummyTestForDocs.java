@@ -102,6 +102,11 @@ public class DummyTestForDocs implements PerformanceTest {
         }).execute();
     }
 
+    @Override
+    public String getExistingDatabasePath() {
+        return null;
+    }
+
     /**
      * {@inheritDoc}
      */

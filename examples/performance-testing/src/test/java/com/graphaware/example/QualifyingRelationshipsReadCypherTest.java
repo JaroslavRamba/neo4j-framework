@@ -57,6 +57,11 @@ public class QualifyingRelationshipsReadCypherTest extends QualifyingRelationshi
         super.prepareDatabase(database, params);
     }
 
+    @Override
+    public String getExistingDatabasePath() {
+        return null;
+    }
+
     /**
      * {@inheritDoc}
      */
